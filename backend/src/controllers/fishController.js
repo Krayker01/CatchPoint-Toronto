@@ -1,3 +1,4 @@
+
 export function getAllFish(_, res) {
     res.status(200).json({ message: "Fish list retrieved successfully." });
 };

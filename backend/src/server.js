@@ -1,10 +1,15 @@
 import express from "express";
-const app = express();
+import dotenv from "dotenv";
 import fishRoutes from "./routes/fishRoutes.js";
+import { connectDB } from "./config/db.js";
+
+const app = express();
+dotenv.config();
 
 //middleware
 app.use("/api/search", fishRoutes);
 
-app.listen(3000, () => {
-    console.log("Server was strted on port 3000");
-});
+connectDB().then(() => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => { console.log("Server was started on port", PORT); });
+})
