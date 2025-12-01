@@ -3,80 +3,164 @@ import Fish from "../models/Fish.js";
 import Location from "../models/Location.js";
 import Bait from "../models/Bait.js";
 
-// AllFish controller
+/**
+ * Controller: Get all fish
+ * Returns all fish with populated locations and baits
+ */
 export async function getAllFish(_, res) {
     try {
-        const fish = await Fish.find().populate("locations").populate("baits");
-        res.status(200).json({ fish });
-    } catch (error) {
-        console.error("Error in getAllFish controller", error);
-        res.status(500).json({ message: "Internal server error" })
-    }
-};
+        const fishList = await Fish.find()
+            .populate("locations") // just location _id
+            .populate("baits");
 
-// FishById controller
+        return res.status(200).json({ fish: fishList });
+    } catch (error) {
+        console.error("Error in getAllFish:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+/**
+ * Controller: Get fish by ID
+ * Returns fish with all locations + baits
+ */
 export async function getFishById(req, res) {
     const { id } = req.params;
-    // Validation of ObjectId
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: "Invalid fish ID" });
     }
+
     try {
         const fish = await Fish.findById(id)
             .populate("locations")
             .populate("baits");
+
         if (!fish) return res.status(404).json({ message: "Fish not found" });
-        res.status(200).json({ fish });
+
+        // Fetch season info for this fish from locations
+        const populatedLocations = await Location.find({ "fish.fish": fish._id });
+
+        const locationsWithSeason = populatedLocations.map(loc => {
+            const fishEntry = loc.fish.find(f => f.fish.equals(fish._id));
+            return {
+                _id: loc._id,
+                name: loc.name,
+                coordinates: loc.coordinates,
+                image: loc.image,
+                bestSeason: fishEntry?.bestSeason || {}
+            };
+        });
+
+        return res.status(200).json({
+            fish: {
+                ...fish.toObject(),
+                locations: locationsWithSeason
+            }
+        });
     } catch (error) {
-        console.error("Error in getFishById controller:", error);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Error in getFishById:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 
-// FishByFilter controller
+/**
+ * Controller: Get fish by filters
+ * Supports:
+ *  - species
+ *  - location
+ *  - month
+ */
 export async function getFishByFilter(req, res) {
     try {
         const { species, location, month } = req.query;
-        let fishIds = [];
-        let locationIds = [];
+        let fishList;
 
-        // If a fish is specified
+        // 🔹 Filter by species only
         if (species) {
-            const fish = await Fish.findOne({ name: species })
-            if (!fish) return res.status(404).json({ message: "No such fish" });
-            fishIds = [fish._id]
+            fishList = await Fish.find({ name: new RegExp(`^${species}$`, "i") }).populate("baits");
+        } else {
+            fishList = await Fish.find().populate("baits");
         }
 
-        // If a month is specified
-        if (month) {
-            const seasonal = await Fish.find({ [`bestSeason.${month}`]: "high" });
-            const seasonalIds = seasonal.map(f => f._id);
-            fishIds = fishIds.length ? fishIds.filter(id => seasonalIds.includes(id)) : seasonalIds
-        }
+        // 🔹 Attach location info and bestSeason
+        const populatedFish = await Promise.all(fishList.map(async f => {
+            // Find all locations for this fish
+            const locs = await Location.find({ "fish.fish": f._id });
 
-        // If a location is specified
+            const locationsWithSeason = locs.map(loc => {
+                const fishEntry = loc.fish.find(x => x.fish.equals(f._id));
+                return {
+                    _id: loc._id,
+                    name: loc.name,
+                    coordinates: loc.coordinates,
+                    image: loc.image,
+                    bestSeason: fishEntry?.bestSeason || {}
+                };
+            });
+
+            return { ...f.toObject(), locations: locationsWithSeason };
+        }));
+
+        let filteredFish = populatedFish;
+
+        // 🔹 Filter by location
         if (location) {
-            const loc = await Location.findOne({ name: location });
-            if (!loc) return res.status(404).json({ message: "Location not found" });
-            locationIds = [loc._id];
-            fishIds = fishIds.length
-                ? await Fish.find({ _id: { $in: fishIds }, locations: loc._id }).distinct("_id")
-                : await Fish.find({ locations: loc._id }).distinct("_id");
+            filteredFish = filteredFish.map(f => {
+                const locs = f.locations.filter(l => l.name.toLowerCase() === location.toLowerCase());
+                return { ...f, locations: locs };
+            }).filter(f => f.locations.length > 0);
         }
 
-        // If nothing is specified → return all
-        if (!species && !location && !month) {
-            const fish = await Fish.find().populate("locations");
-            return res.status(200).json({ fish });
+        // 🔹 Filter by month
+        if (month) {
+            const monthLower = month.toLowerCase();
+            filteredFish = filteredFish.map(f => {
+                const locs = f.locations.filter(l => ["high", "medium"].includes(l.bestSeason[monthLower]));
+                if (locs.length === 0) return null;
+                return { ...f, locations: locs };
+            }).filter(f => f !== null);
         }
 
-        const fish = await Fish.find({ _id: { $in: fishIds } })
-            .populate("locations")
-            .populate("baits");
+        return res.status(200).json({ fish: filteredFish });
 
-        res.status(200).json({ fish });
     } catch (error) {
-        console.error("Error in getFishByFilter controller");
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Error in getFishByFilter:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
-};
+}
+
+/**
+ * Controller: Get all fish in a location
+ * Supports optional month filter
+ */
+export async function getFishByLocation(req, res) {
+    try {
+        const { locationName, month } = req.query;
+
+        if (!locationName) return res.status(400).json({ message: "Location required" });
+
+        const loc = await Location.findOne({ name: locationName }).populate("fish.fish");
+
+        if (!loc) return res.status(404).json({ message: "Location not found" });
+
+        let fishes = loc.fish.map(fEntry => {
+            const fishData = fEntry.fish.toObject();
+            return {
+                ...fishData,
+                bestSeason: fEntry.bestSeason
+            };
+        });
+
+        if (month) {
+            const monthLower = month.toLowerCase();
+            fishes = fishes.filter(f => ["high", "medium"].includes(f.bestSeason[monthLower]));
+        }
+
+        return res.status(200).json({ location: loc.name, fishes });
+
+    } catch (error) {
+        console.error("Error in getFishByLocation:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
