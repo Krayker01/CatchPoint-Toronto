@@ -7,6 +7,7 @@ const app = express();
 dotenv.config();
 
 //middleware
+app.use(express.json());
 app.use("/api/search", fishRoutes);
 
 connectDB().then(() => {

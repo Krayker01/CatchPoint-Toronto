@@ -12,7 +12,6 @@ export async function getAllFish(_, res) {
         const fishList = await Fish.find()
             .populate("locations") // just location _id
             .populate("baits");
-
         return res.status(200).json({ fish: fishList });
     } catch (error) {
         console.error("Error in getAllFish:", error);
@@ -76,14 +75,14 @@ export async function getFishByFilter(req, res) {
         const { species, location, month } = req.query;
         let fishList;
 
-        // 🔹 Filter by species only
+        // Filter by species only
         if (species) {
             fishList = await Fish.find({ name: new RegExp(`^${species}$`, "i") }).populate("baits");
         } else {
             fishList = await Fish.find().populate("baits");
         }
 
-        // 🔹 Attach location info and bestSeason
+        // Attach location info and bestSeason
         const populatedFish = await Promise.all(fishList.map(async f => {
             // Find all locations for this fish
             const locs = await Location.find({ "fish.fish": f._id });
@@ -104,7 +103,7 @@ export async function getFishByFilter(req, res) {
 
         let filteredFish = populatedFish;
 
-        // 🔹 Filter by location
+        // Filter by location
         if (location) {
             filteredFish = filteredFish.map(f => {
                 const locs = f.locations.filter(l => l.name.toLowerCase() === location.toLowerCase());
@@ -112,7 +111,7 @@ export async function getFishByFilter(req, res) {
             }).filter(f => f.locations.length > 0);
         }
 
-        // 🔹 Filter by month
+        // Filter by month
         if (month) {
             const monthLower = month.toLowerCase();
             filteredFish = filteredFish.map(f => {
