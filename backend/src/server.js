@@ -2,12 +2,14 @@ import express from "express";
 import dotenv from "dotenv";
 import fishRoutes from "./routes/fishRoutes.js";
 import { connectDB } from "./config/db.js";
+import rateLimiter from "./middleware/rateLimiter.js";
 
 const app = express();
 dotenv.config();
 
 //middleware
 app.use(express.json());
+app.use(rateLimiter);
 app.use("/api/search", fishRoutes);
 
 connectDB().then(() => {
