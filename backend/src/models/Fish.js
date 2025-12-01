@@ -8,6 +8,9 @@ const fishSchema = new mongoose.Schema({
     description: {
         type: String
     },
+    image: { // путь к фото в public/fish/
+        type: String
+    },
     bestSeason: {
         january: { type: String, default: "low" },
         february: { type: String, default: "low" },
@@ -24,7 +27,6 @@ const fishSchema = new mongoose.Schema({
     },
     locations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Location" }],
     baits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bait" }],
-    image: { type: String }, // путь к фото в public/fish/
 });
 
 const Fish = mongoose.model("Fish", fishSchema);

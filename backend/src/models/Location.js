@@ -4,11 +4,11 @@ const locationSchema = new mongoose.Schema({
     description: { type: String },
     fish: [{ type: mongoose.Schema.Types.ObjectId, ref: "Fish" }],
     image: { type: String }, // путь к фото места
-    coordinates: {          // если планируешь карты
+    coordinates: {          // при планировке карт
         lat: { type: Number },
         lng: { type: Number }
     }
 });
 
-const Location = mongoose.model("Location", fishSchema);
+const Location = mongoose.model("Location", locationSchema);
 export default Location;

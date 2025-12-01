@@ -5,7 +5,7 @@ const baitSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    type: { type: String }, // например, "воблер", "мормышка", "прикормка"
+    type: { type: String }, // например, "воблер", "блесна", "прикормка"
     description: { type: String },
     fish: [{ type: mongoose.Schema.Types.ObjectId, ref: "Fish" }],
     image: { type: String } // путь к фото в public/baits/
