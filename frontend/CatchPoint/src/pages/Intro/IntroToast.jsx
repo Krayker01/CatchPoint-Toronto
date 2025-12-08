@@ -15,7 +15,7 @@ const IntroToast = () => {
             ),
             {
                 id: "welcome-toast",
-                duration: 5000,
+                duration: 10000,
                 position: "top-center",
             }
         );
