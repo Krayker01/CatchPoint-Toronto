@@ -1,4 +1,7 @@
 import React, { useRef } from 'react';
+import './intro.css';
+import BackgroundMusic from './BackgroundMusic';
+import IntroToast from './IntroToast';
 
 const Intro = () => {
     const containerRef = useRef(null);
@@ -56,50 +59,27 @@ const Intro = () => {
                 perspective: "1000px",
             }}
         >
+            <IntroToast />
+            <BackgroundMusic />
             {/* BACKGROUND */}
             <img
                 src="/assets/introPage/background.jpg"
-                className="layer"
+                className="layer background-layer"
                 data-depth="-5"
                 data-speed="0.2"  // slow movement
-                style={backgroundStyle}
-                alt=""
+                alt="Page background"
             />
 
-            {/* FRONT ELEMENT  */}
+            {/* FRONT ELEMENT */}
             <img
                 src="/assets/introPage/notes.png"
-                className="layer"
+                className="layer front-layer"
                 data-depth="60"
                 data-speed="1"   // active movement
-                style={frontStyle}
-                alt=""
+                alt="Image of notes"
             />
         </div>
     );
-};
-
-const backgroundStyle = {
-    position: "absolute",
-    width: "120%",    // hide the white edges
-    height: "120%",
-    top: "-10%",
-    left: "-10%",
-    objectFit: "cover",
-    transition: "transform 0.1s linear",
-    willChange: "transform",
-};
-
-const frontStyle = {
-    position: "absolute",
-    bottom: "0",         // stick to the bottom
-    left: "50%",          // horizontal center
-    transform: "translateX(-50%)",  // basic centering
-    width: "110%",         // adjustable size
-    height: "auto",
-    objectFit: "contain",
-    transition: "transform 0.1s linear",
-    willChange: "transform",
 };
 
 export default Intro;

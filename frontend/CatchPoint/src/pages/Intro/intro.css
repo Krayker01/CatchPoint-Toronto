@@ -1,0 +1,22 @@
+.background-layer {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+    object-fit: cover;
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+.front-layer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s linear;
+    will-change: transform;
+}
