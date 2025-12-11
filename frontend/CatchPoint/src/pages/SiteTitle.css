@@ -1,0 +1,19 @@
+.site-title {
+    position: fixed;
+    top: 2vh;
+    left: 4vh;
+
+    height: 30vh;
+    width: auto;
+
+    user-select: none;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+@media (max-width: 768px) {
+    .site-title {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

@@ -1,7 +1,11 @@
 import React, { useRef } from 'react';
-import './intro.css';
+
 import BackgroundMusic from './BackgroundMusic';
 import IntroToast from './IntroToast';
+import SiteTitle from '../SiteTitle';
+import CreditLabel from './CreditLabel';
+
+import './intro.css';
 
 const Intro = () => {
     const containerRef = useRef(null);
@@ -59,8 +63,14 @@ const Intro = () => {
                 perspective: "1000px",
             }}
         >
+
+
+            <SiteTitle />
+            <CreditLabel />
             <IntroToast />
             <BackgroundMusic />
+
+
             {/* BACKGROUND */}
             <img
                 src="/assets/introPage/background.jpg"

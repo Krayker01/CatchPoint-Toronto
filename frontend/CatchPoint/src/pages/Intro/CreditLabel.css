@@ -1,0 +1,29 @@
+.credit-label {
+    position: fixed;
+    top: 20vh;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 4rem;
+    font-weight: 300;
+    color: #ffffff;
+
+    z-index: 9998;
+    user-select: none;
+    pointer-events: none;
+    text-align: center;
+}
+
+@media (min-width:768px) and (max-width: 1800px) {
+    .credit-label {
+        top: 37vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .credit-label {
+        top: 35vh;
+        font-size: 3.5rem;
+        padding: 5px 10px;
+    }
+}

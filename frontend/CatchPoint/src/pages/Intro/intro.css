@@ -20,3 +20,9 @@
     transition: transform 0.3s linear;
     will-change: transform;
 }
+
+@media (max-width: 1300px) {
+    .front-layer {
+        width: 140%;
+    }
+}
