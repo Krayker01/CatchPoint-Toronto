@@ -5,11 +5,12 @@ import { Music, ArrowRight } from "lucide-react";
 
 const IntroToast = () => {
     useEffect(() => {
+        if (window.innerWidth < 768) return;
         toast.custom(
             (t) => (
                 <div className={`custom-toast ${t.visible ? 'enter' : 'leave'}`}>
                     <span>
-                        <Music size={20} /> Turn on the music and enjoy the atmosphere <ArrowRight className="arrow" size={20} />
+                        <Music size={20} /> Turn on the music and enjoy the atmosphere
                     </span>
                 </div>
             ),

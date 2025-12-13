@@ -1,12 +1,13 @@
 .background-layer {
     position: absolute;
-    width: 120%;
-    height: 120%;
-    top: -10%;
-    left: -10%;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     object-fit: cover;
     transition: transform 0.1s linear;
     will-change: transform;
+    z-index: -1;
 }
 
 .front-layer {
@@ -14,15 +15,23 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 110%;
+    width: 100%;
+    max-width: none;
     height: auto;
     object-fit: contain;
     transition: transform 0.3s linear;
     will-change: transform;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1024px) {
     .front-layer {
-        width: 140%;
+        width: 120%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .front-layer {
+        width: 230%;
     }
 }

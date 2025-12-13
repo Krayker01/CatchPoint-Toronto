@@ -1,0 +1,27 @@
+.footer {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.65);
+
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+    z-index: 9998;
+
+    white-space: nowrap;
+
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .footer {
+        font-size: 0.8rem;
+        bottom: 6px;
+    }
+}

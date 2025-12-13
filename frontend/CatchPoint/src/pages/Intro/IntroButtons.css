@@ -1,0 +1,28 @@
+.intro-buttons {
+    position: fixed;
+    top: 25vh;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+
+    z-index: 9999;
+}
+
+/* Mobile */
+@media (min-width:768px) and (max-width: 1800px) {
+    .intro-buttons {
+        top: 45vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-buttons {
+        flex-direction: column;
+        top: 58vh;
+        gap: 20px;
+    }
+}
