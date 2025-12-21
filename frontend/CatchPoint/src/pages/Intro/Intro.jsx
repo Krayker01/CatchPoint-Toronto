@@ -10,30 +10,43 @@ import LearnMoreButton from './AboutUsButton';
 import Footer from './Footer';
 
 import './intro.css';
-import "./IntroButtons.css"
+import './IntroButtons.css';
 
 const Intro = () => {
     const containerRef = useRef(null);
     const navigate = useNavigate();
-    const [disableEffects, setDisableEffects] = useState(false);
+
+    const [disableEffects, setDisableEffects] = useState(true);
 
     useEffect(() => {
-        const checkScreen = () => setDisableEffects(window.innerWidth < 1024);
-        checkScreen();
-        window.addEventListener('resize', checkScreen);
-        return () => window.removeEventListener('resize', checkScreen);
+        const isChrome =
+            /Chrome/.test(navigator.userAgent) &&
+            /Google Inc/.test(navigator.vendor);
+
+        const isDesktop = window.innerWidth >= 1024;
+
+        setDisableEffects(!(isChrome && isDesktop));
+
+        const handleResize = () => {
+            const isDesktopNow = window.innerWidth >= 1024;
+            setDisableEffects(!(isChrome && isDesktopNow));
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleMouseMove = (e) => {
         if (disableEffects) return;
 
         const container = containerRef.current;
+        if (!container) return;
+
         const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-        const x = ((e.clientX - rect.left) / rect.width - 0.5);
-        const y = ((e.clientY - rect.top) / rect.height - 0.5);
-
-        const layers = container.querySelectorAll(".layer");
+        const layers = container.querySelectorAll('.layer');
 
         layers.forEach((layer) => {
             const depth = parseFloat(layer.dataset.depth);
@@ -46,19 +59,18 @@ const Intro = () => {
 
             if (depth > 0) {
                 layer.style.transform = `
-                    translateX(-50%) translateX(${moveX}px)
+                    translateX(-50%)
+                    translateX(${moveX}px)
                     translateY(${moveY}px)
                     translateZ(${depth}px)
                     rotateX(${rotateX}deg)
                     rotateY(${rotateY}deg)
-                    scale(1.05)  /* небольшой масштаб для фронтального слоя */
                 `;
             } else {
                 layer.style.transform = `
+                    translateX(${moveX * 0.3}px)
+                    translateY(${moveY * 0.3}px)
                     translateZ(${depth}px)
-                    rotateX(${rotateX}deg)
-                    rotateY(${rotateY}deg)
-                    scale(1.02)  /* небольшой масштаб для фонового слоя */
                 `;
             }
         });
@@ -69,20 +81,22 @@ const Intro = () => {
             ref={containerRef}
             onMouseMove={handleMouseMove}
             style={{
-                position: "fixed",
+                position: 'fixed',
                 top: 0,
                 left: 0,
-                width: "100vw",
-                height: "100vh",
-                overflow: "hidden",
-                perspective: "1000px",
+                width: '100vw',
+                height: '100vh',
+                overflow: 'hidden',
+                perspective: '1000px',
             }}
         >
             <SiteTitle />
+
             <div className="intro-buttons">
-                <GetStartedButton onClick={() => navigate("/home")} />
-                <LearnMoreButton onClick={() => navigate("/about")} />
+                <GetStartedButton onClick={() => navigate('/home')} />
+                <LearnMoreButton onClick={() => navigate('/about')} />
             </div>
+
             <CreditLabel />
             <IntroToast />
             <BackgroundMusic />
