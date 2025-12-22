@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bestSeasonSchema from "./BestSeason.js";
 
 const fishSchema = new mongoose.Schema({
     name: {
@@ -13,7 +14,8 @@ const fishSchema = new mongoose.Schema({
         type: String
     },
     baits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bait" }],
-    locations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Location" }]
+    locations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Location" }],
+    bestSeason: bestSeasonSchema
 });
 
 const Fish = mongoose.model("Fish", fishSchema);

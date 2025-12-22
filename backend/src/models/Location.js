@@ -1,33 +1,17 @@
 import mongoose from "mongoose";
 
 const locationSchema = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
-    description: { type: String },
-    image: { type: String },
+    osmId: { type: Number, required: true },
+    name: { type: String, required: true },
+    waterType: { type: String, required: true, default: "pond" }, // lake, pond, river
     coordinates: {
-        lat: { type: Number },
-        lng: { type: Number }
+        type: { type: String, enum: ["Point"], default: "Point" },
+        coordinates: { type: [Number], required: true },
     },
-    fish: [
-        {
-            fish: { type: mongoose.Schema.Types.ObjectId, ref: "Fish", required: true },
-            bestSeason: {
-                january: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                february: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                march: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                april: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                may: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                june: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                july: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                august: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                september: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                october: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                november: { type: String, enum: ["low", "medium", "high"], default: "low" },
-                december: { type: String, enum: ["low", "medium", "high"], default: "low" },
-            }
-        }
-    ]
+    fish: [{ type: mongoose.Schema.Types.ObjectId, ref: "Fish" }]
+
 });
 
+locationSchema.index({ coordinates: "2dsphere" });
 const Location = mongoose.model("Location", locationSchema);
 export default Location;

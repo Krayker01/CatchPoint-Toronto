@@ -5,9 +5,9 @@ const baitSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    type: { type: String }, // например, "воблер", "блесна", "прикормка"
+    type: { type: String }, // for example, "wobbler", "spinner", "bait"
     description: { type: String },
-    image: { type: String } // путь к фото в public/baits/
+    image: { type: String } // path to photo in public/baits/
 });
 
 const Bait = mongoose.model("Bait", baitSchema);
