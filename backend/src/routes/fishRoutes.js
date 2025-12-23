@@ -1,9 +1,10 @@
 import express from "express";
-import { getAllFish, getFishByFilter, getFishById } from "../controllers/fishController.js";
+import { getAllFish, getAllLocation, getFishByFilter, getFishById } from "../controllers/fishController.js";
 const router = express.Router();
 
-router.get("/", getAllFish);
-router.get("/filter", getFishByFilter);
-router.get("/:id", getFishById);
+router.get("/fish", getAllFish);
+router.get("/location", getAllLocation);
+router.get("/fish/filter", getFishByFilter);
+router.get("/fish/:id", getFishById);
 
 export default router;

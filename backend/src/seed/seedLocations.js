@@ -21,13 +21,11 @@ out center tags;
 const seedLocations = async () => {
     try {
         await connectDB();
-        console.log("MONGODB CONNECTED SUCCESSFULLY!");
+        console.log("✅ MongoDB connected");
 
-        // Delete old locations
         await Location.deleteMany();
-        console.log("Old locations cleared");
+        console.log("🗑 Old locations cleared");
 
-        // Overpass req
         const response = await fetch(OVERPASS_URL, {
             method: "POST",
             body: query,
@@ -35,30 +33,29 @@ const seedLocations = async () => {
 
         const data = await response.json();
 
-        // Map elements to Mongo format
         const locations = data.elements.map((el) => {
             const lat = el.center?.lat;
             const lon = el.center?.lon;
-
-            // Check that the coordinates exist
             if (!lat || !lon) return null;
 
-            // Determining the type of reservoir
-            const waterType = el.tags.water || el.tags.waterway || "pond";
+            // Определяем типы воды как массив
+            const waterType = [];
+            if (el.tags.water === "lake") waterType.push("lake");
+            if (el.tags.water === "pond") waterType.push("pond");
+            if (el.tags.waterway === "river") waterType.push("river");
+            if (waterType.length === 0) waterType.push("pond"); // дефолт
 
             return {
-                osmId: el.id,
                 name: el.tags.name,
                 waterType,
                 coordinates: {
                     type: "Point",
-                    coordinates: [lon, lat], // GeoJSON: [lng, lat]
+                    coordinates: [lon, lat],
                 },
                 fish: [],
             };
-        }).filter(Boolean); // delete null
+        }).filter(Boolean);
 
-        // Saving all locations in Mongo
         await Location.insertMany(locations);
         console.log(`✅ Inserted ${locations.length} locations into MongoDB`);
 

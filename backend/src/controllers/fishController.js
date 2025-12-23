@@ -19,6 +19,16 @@ export async function getAllFish(_, res) {
     }
 }
 
+export async function getAllLocation(_, res) {
+    try {
+        const locationList = await Location.find()
+        return res.status(200).json({ location: locationList });
+    } catch (error) {
+        console.error("Error in getAllLocation:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 /**
  * Controller: Get fish by ID
  * Returns fish with all locations + baits
