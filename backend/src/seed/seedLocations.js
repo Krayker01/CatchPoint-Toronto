@@ -21,10 +21,10 @@ out center tags;
 const seedLocations = async () => {
     try {
         await connectDB();
-        console.log("✅ MongoDB connected");
+        console.log("MongoDB connected");
 
         await Location.deleteMany();
-        console.log("🗑 Old locations cleared");
+        console.log("Old locations cleared");
 
         const response = await fetch(OVERPASS_URL, {
             method: "POST",
@@ -38,12 +38,12 @@ const seedLocations = async () => {
             const lon = el.center?.lon;
             if (!lat || !lon) return null;
 
-            // Определяем типы воды как массив
+            // Water types as an array
             const waterType = [];
             if (el.tags.water === "lake") waterType.push("lake");
             if (el.tags.water === "pond") waterType.push("pond");
             if (el.tags.waterway === "river") waterType.push("river");
-            if (waterType.length === 0) waterType.push("pond"); // дефолт
+            if (waterType.length === 0) waterType.push("pond"); // default
 
             return {
                 name: el.tags.name,
@@ -57,11 +57,11 @@ const seedLocations = async () => {
         }).filter(Boolean);
 
         await Location.insertMany(locations);
-        console.log(`✅ Inserted ${locations.length} locations into MongoDB`);
+        console.log(`Inserted ${locations.length} locations into MongoDB`);
 
         process.exit();
     } catch (error) {
-        console.error("❌ Error seeding locations:", error);
+        console.error("Error seeding locations:", error);
         process.exit(1);
     }
 };
