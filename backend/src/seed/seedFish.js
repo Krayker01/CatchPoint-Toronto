@@ -5,22 +5,7 @@ dotenv.config();
 import Fish from "../models/Fish.js";
 import Location from "../models/Location.js";
 import { connectDB } from "../config/db.js";
-import fishData from "../data/fishData.js";
-
-// --- helper for bestSeason ---
-const createSeason = (mediumMonths = [], highMonths = []) => {
-    const months = [
-        "january", "february", "march", "april", "may", "june",
-        "july", "august", "september", "october", "november", "december"
-    ];
-    const season = {};
-    months.forEach(m => {
-        if (highMonths.includes(m)) season[m] = { level: "high" };
-        else if (mediumMonths.includes(m)) season[m] = { level: "medium" };
-        else season[m] = { level: "low" };
-    });
-    return season;
-};
+import { fishData } from "../data/fishData.js";
 
 async function seedFish() {
     await connectDB();

@@ -1,3 +1,17 @@
+// Helper for the bestSeason
+const createSeason = (mediumMonths = [], highMonths = []) => {
+    const months = [
+        "january", "february", "march", "april", "may", "june",
+        "july", "august", "september", "october", "november", "december"
+    ];
+    const season = {};
+    months.forEach(m => {
+        if (highMonths.includes(m)) season[m] = { level: "high" };
+        else if (mediumMonths.includes(m)) season[m] = { level: "medium" };
+        else season[m] = { level: "low" };
+    });
+    return season;
+};
 // Data of all fish
 export const fishData = [
     {
