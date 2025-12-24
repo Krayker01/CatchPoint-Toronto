@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Fish from "../models/Fish.js";
 import Location from "../models/Location.js";
-import Bait from "../models/Bait.js";
 
 /**
  * Controller: Get all fish
@@ -64,7 +63,6 @@ export async function getFishById(req, res) {
         return res.status(200).json({
             fish: {
                 ...fish.toObject(),
-                locations: locationsWithSeason
             }
         });
     } catch (error) {

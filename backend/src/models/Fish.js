@@ -13,6 +13,7 @@ const WATER_TYPE_ENUM = ["lake", "river", "pond"];
 // Possible types of fishing gear
 const GEAR_TYPE_ENUM = ["rod", "fly fishing", "trolling"];
 
+const BAIT_TYPE_ENUM = ["live", "artificial", "spinner", "fly", "dough", "insect"];
 const fishSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -28,7 +29,11 @@ const fishSchema = new mongoose.Schema({
         type: String,
         // URL or path to an image of the fish
     },
-    baits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bait" }],
+    baits: [{
+        type: String,
+        enum: BAIT_TYPE_ENUM,
+        required: true
+    }],
     // List of baits used to catch this fish
     locations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Location" }],
     // List of locations / water bodies where the fish can be found

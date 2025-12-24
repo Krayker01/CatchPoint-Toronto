@@ -21,7 +21,6 @@ out center tags;
 const seedLocations = async () => {
     try {
         await connectDB();
-        console.log("MongoDB connected");
 
         await Location.deleteMany();
         console.log("Old locations cleared");

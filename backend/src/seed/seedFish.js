@@ -10,36 +10,40 @@ import { fishData } from "../data/fishData.js";
 async function seedFish() {
     await connectDB();
 
-    // Удаляем старые рыбы
+    // Remove old fish
     await Fish.deleteMany();
     console.log("Old fish removed");
 
     for (const fish of fishData) {
-        // Создаём или обновляем рыбу
+        // Create or update fish
         const fishDoc = await Fish.findOneAndUpdate(
             { name: fish.name },
-            { $setOnInsert: { ...fish, baits: [] } },
+            { $setOnInsert: { ...fish, baits: fish.baits || ["live"] } },
             { upsert: true, new: true }
         );
 
-        // Находим все локации с соответствующим waterType
+        // --- Bind baits directly from fishData ---
+        fishDoc.baits = fish.baits || ["live"];
+        await fishDoc.save();
+
+        // Find all locations with matching waterType
         const locations = await Location.find({ waterType: { $in: fish.waterType } });
         const locationIds = locations.map(l => l._id);
 
-        // Добавляем рыбу в локации
+        // Add fish to locations
         await Location.updateMany(
             { _id: { $in: locationIds } },
             { $addToSet: { fish: fishDoc._id } }
         );
 
-        // Добавляем локации в рыбу
+        // Add locations to fish
         fishDoc.locations = locationIds;
         await fishDoc.save();
 
-        console.log(`${fish.name} linked to ${locationIds.length} locations (${fish.waterType.join(", ")})`);
+        console.log(`${fish.name} linked to ${locationIds.length} locations and ${fishDoc.baits.length} baits`);
     }
 
-    console.log("All fish seeded and linked to locations");
+    console.log("All fish seeded with baits and linked to locations");
     process.exit();
 }
 
