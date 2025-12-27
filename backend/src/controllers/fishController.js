@@ -139,7 +139,6 @@ export async function getFishById(req, res) {
 
 /**
  * Controller: Get all fish in a location
- * Supports optional month filter
  */
 export async function getFishByLocation(req, res) {
     try {

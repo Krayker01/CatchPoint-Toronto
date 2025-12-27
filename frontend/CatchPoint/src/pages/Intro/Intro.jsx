@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import BackgroundMusic from './BackgroundMusic';
 import IntroToast from './IntroToast';
 import SiteTitle from '../SiteTitle';
 import CreditLabel from './CreditLabel';
@@ -99,7 +98,6 @@ const Intro = () => {
 
             <CreditLabel />
             <IntroToast />
-            <BackgroundMusic />
             <Footer />
 
             {/* BACKGROUND */}
