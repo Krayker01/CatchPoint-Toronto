@@ -1,5 +1,5 @@
 import React from 'react'
-import Footer from '../Intro/Footer.jsx'
+import Footer from '../../components/layout/Footer.jsx'
 import '../../../public/assets/background/background.css'
 
 const AboutPage = () => {

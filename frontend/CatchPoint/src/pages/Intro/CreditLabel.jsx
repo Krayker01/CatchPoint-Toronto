@@ -24,7 +24,7 @@ const CreditLabel = () => {
         };
     }, []);
 
-    return <div className="credit-label dancing-script-500">{displayedText}</div>;
+    return <div className="credit-label caveat-500">{displayedText}</div>;
 };
 
 export default CreditLabel;

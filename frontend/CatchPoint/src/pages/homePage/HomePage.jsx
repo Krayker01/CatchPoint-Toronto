@@ -1,13 +1,13 @@
 import React from 'react'
-import Footer from '../Intro/Footer.jsx'
+import Footer from '../../components/layout/Footer.jsx'
 import '../../../public/assets/background/background.css'
+import NavBar from '../../components/layout/NavBar.jsx'
 
 const HomePage = () => {
     return (
         <div className="background-wrapper">
             <div className="background">
-
-                <h1>HomePage</h1>
+                <NavBar />
                 <Footer />
 
             </div>

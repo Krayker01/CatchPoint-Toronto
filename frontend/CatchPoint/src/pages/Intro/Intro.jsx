@@ -2,11 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import IntroToast from './IntroToast';
-import SiteTitle from '../SiteTitle';
+import SiteTitle from "../Intro/SiteTitle";
 import CreditLabel from './CreditLabel';
 import GetStartedButton from './GetStartedButton';
 import LearnMoreButton from './AboutUsButton';
-import Footer from './Footer';
+import Footer from '../../components/layout/Footer';
 
 import './intro.css';
 import './IntroButtons.css';

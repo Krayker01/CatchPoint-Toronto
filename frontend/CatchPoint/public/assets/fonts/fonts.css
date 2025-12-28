@@ -1,10 +1,15 @@
 .dancing-script-500 {
     font-family: "Dancing Script", cursive;
     font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
 }
 
+.tagesschrift-regular {
+    font-family: "Tagesschrift", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
 
 .caveat-500 {
     font-family: "Caveat", cursive;
