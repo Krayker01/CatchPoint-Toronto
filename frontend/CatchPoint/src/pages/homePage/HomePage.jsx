@@ -1,6 +1,5 @@
 import React from 'react'
 import Footer from '../../components/layout/Footer.jsx'
-import '../../../public/assets/background/background.css'
 import NavBar from '../../components/layout/NavBar.jsx'
 
 const HomePage = () => {
