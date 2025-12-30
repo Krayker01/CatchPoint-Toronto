@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
-import "./SoundButton.css"
 import { Volume2, VolumeX } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "../layout/NavBarButton.css"
+import "../layout/SoundButton.css"
 
 const BackgroundMusic = () => {
     const audioRef = useRef(null);
@@ -33,17 +34,7 @@ const BackgroundMusic = () => {
             {/* button */}
             <button
                 onClick={toggleMusic}
-                className="sound-button"
-                style={{
-                    position: "fixed",
-                    top: "20px",
-                    right: "20px",
-                    backgroundColor: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "24px",
-                    zIndex: 9999,
-                }}
+                className="navbar-button sound-button"
             >
                 {isPlaying ? (
                     <Volume2 className="volume-icon playing" size={32} />

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import './IntroToast.css';
-import { Music, ArrowRight } from "lucide-react";
+import { Music } from "lucide-react";
 
 const IntroToast = () => {
     useEffect(() => {
