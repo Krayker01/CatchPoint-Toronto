@@ -8,7 +8,6 @@ const HomePage = () => {
             <div className="background">
                 <NavBar />
                 <Footer />
-
             </div>
         </div>
     )

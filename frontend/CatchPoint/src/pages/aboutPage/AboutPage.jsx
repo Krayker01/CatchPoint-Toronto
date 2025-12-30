@@ -1,14 +1,13 @@
 import React from 'react'
 import Footer from '../../components/layout/Footer.jsx'
+import NavBar from '../../components/layout/NavBar.jsx'
 
 const AboutPage = () => {
     return (
         <div className="background-wrapper">
             <div className="background">
-
-                <h1>AboutPage</h1>
+                <NavBar />
                 <Footer />
-
             </div>
         </div>
     )
