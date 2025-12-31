@@ -6,17 +6,17 @@ import Location from "../models/Location.js";
  * Controller: Get all fish
  * Returns all fish with populated locations and baits
  */
-// export async function getAllFish(_, res) {
-//     try {
-//         const fishList = await Fish.find()
-//             .populate("locations") // just location _id
-//             .populate("baits");
-//         return res.status(200).json({ fish: fishList });
-//     } catch (error) {
-//         console.error("Error in getAllFish:", error);
-//         return res.status(500).json({ message: "Internal server error" });
-//     }
-// }
+export async function getAllFish(_, res) {
+    try {
+        const fishList = await Fish.find()
+            .populate("locations") // just location _id
+            .populate("baits");
+        return res.status(200).json({ fish: fishList });
+    } catch (error) {
+        console.error("Error in getAllFish:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
 
 // export async function getAllLocation(_, res) {
 //     try {

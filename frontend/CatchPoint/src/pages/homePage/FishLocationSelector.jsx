@@ -1,9 +1,10 @@
+import axios from "axios";
 import React, { useState } from 'react';
 
 const fishList = ['Salmon', 'Tuna', 'Trout', 'Bass', 'Carp'];
 const locationList = ['River', 'Lake', 'Sea', 'Pond', 'Stream'];
 
-const FishLocationSelector = () => {
+const FishLocationSelector = ({ onRateLimit }) => {
     const [fish, setFish] = useState('');
     const [location, setLocation] = useState('');
     const [fishSuggestions, setFishSuggestions] = useState([]);
@@ -37,6 +38,33 @@ const FishLocationSelector = () => {
         setLocation(value);
         setFish(''); // reset fish
         setLocationSuggestions([]);
+    };
+
+    // Fetch data on button click
+    const fetchNotes = async () => {
+        if (!fish && !location) return;
+
+        try {
+            const res = await axios.get("http://localhost:3000/api/search/fish/");
+            console.log("Server response:", res.data);
+
+            if (res.status === 429) {
+                onRateLimit?.();
+                return;
+            }
+
+            // Здесь можно использовать данные для подсказок
+            // Например:
+            // setFishSuggestions(res.data.fish);
+            // setLocationSuggestions(res.data.locations);
+
+        } catch (error) {
+            if (error.response && error.response.status === 429) {
+                onRateLimit?.();
+            } else {
+                console.log("Error fetching", error);
+            }
+        }
     };
 
     return (
@@ -89,7 +117,7 @@ const FishLocationSelector = () => {
                 {/* See Catch button */}
                 <button
                     className="see-catch-button"
-                    onClick={() => console.log('Show catch for:', fish || location)}
+                    onClick={fetchNotes}
                 >
                     See Catch
                 </button>

@@ -1,0 +1,23 @@
+.rate-limit-wrapper {
+    width: calc(100% - 40px);
+    margin: 70px 20px 0 20px;
+    padding: 1.5rem;
+    border: 2px solid rgba(52, 42, 3, 0.3);
+    background-color: #a5876e;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 1rem;
+}
+
+.rate-limit-title {
+    color: #342a03;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.rate-limit-text {
+    color: #342a03;
+    font-size: 1rem;
+    line-height: 1.5;
+}
