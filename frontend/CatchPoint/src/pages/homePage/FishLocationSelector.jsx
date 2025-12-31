@@ -84,7 +84,7 @@ const FishLocationSelector = ({ onRateLimit }) => {
 
     // Fetch data on button click
     const fetchNotes = async () => {
-        setMessage(''); // сбрасываем предыдущие сообщения
+        setMessage('');
         try {
             if (fish) {
                 if (selectedFish) {
@@ -100,7 +100,7 @@ const FishLocationSelector = ({ onRateLimit }) => {
                     if (fishResults.length === 0) {
                         setMessage(`Fish "${fish}" not found in database`);
                     } else {
-                        setSelectedFish(fishResults[0]); // можно выбрать первую подсказку
+                        setSelectedFish(fishResults[0]);
                     }
                 }
             }
