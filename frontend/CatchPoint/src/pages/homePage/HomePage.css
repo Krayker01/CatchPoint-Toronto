@@ -1,0 +1,162 @@
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 32px;
+    padding: 3px;
+    margin: 3% 5%;
+}
+
+.content-left,
+.content-right {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+}
+
+/* Selector title */
+.fish-location-selector .selector-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+    color: #342a03;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* Inputs container */
+.fish-location-selector .inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin: 24px 0;
+    padding: 12px;
+}
+
+/* Autocomplete container */
+.autocomplete {
+    position: relative;
+    width: 150px;
+}
+
+/* Autocomplete input */
+.autocomplete input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 2px solid rgba(52, 42, 3, 0.7);
+    border-radius: 10px;
+    background-color: rgba(52, 42, 3, 0.15);
+    color: #342a03;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    transition: all 0.3s ease;
+}
+
+.autocomplete input:hover {
+    background-color: rgba(52, 42, 3, 0.25);
+}
+
+.autocomplete input:focus {
+    outline: none;
+    border-color: rgba(52, 42, 3, 1);
+    box-shadow: 0 0 8px rgba(52, 42, 3, 0.4);
+}
+
+.autocomplete input::placeholder {
+    color: #575555;
+    opacity: 1
+}
+
+/* Disabled input when other field is selected */
+.autocomplete input.disabled-input {
+    background-color: rgba(52, 42, 3, 0.05);
+    /* light background */
+    border-color: rgba(52, 42, 3, 0.3);
+    color: rgba(52, 42, 3, 0.5);
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+
+
+/* Suggestions dropdown */
+.autocomplete .suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #a5876e;
+    border: 1px solid rgba(52, 42, 3, 0.8);
+    border-radius: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 4px;
+    padding: 0;
+    list-style: none;
+}
+
+.autocomplete .suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.autocomplete .suggestions li:hover {
+    background-color: rgba(52, 42, 3, 0.1);
+}
+
+/* See Catch button */
+.fish-location-selector .see-catch-button {
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background-color: rgba(52, 42, 3, 0.8);
+    border: 2px solid rgba(52, 42, 3, 1);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s;
+}
+
+.fish-location-selector .see-catch-button:hover {
+    background-color: rgba(52, 42, 3, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fish-location-selector .see-catch-button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile */
+@media (max-width: 990px) {
+    .fish-location-selector .inputs {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        /* center all elements */
+    }
+
+    .autocomplete,
+    .autocomplete input,
+    .fish-location-selector .see-catch-button {
+        width: 100%;
+        max-width: 280px;
+        /* equal width */
+    }
+}
