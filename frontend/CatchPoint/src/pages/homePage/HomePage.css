@@ -160,3 +160,25 @@
         /* equal width */
     }
 }
+
+.message {
+    margin-top: 12px;
+    padding: 10px 16px;
+    background-color: #fff0f0;
+    /* светлый розовый фон */
+    color: #d32f2f;
+    /* насыщенный красный текст */
+    border: 1px solid #d32f2f;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    /* текст по центру */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* лёгкая тень */
+    max-width: 300px;
+    /* ограничение ширины */
+    margin-left: auto;
+    margin-right: auto;
+    /* центрирование блока по горизонтали */
+}

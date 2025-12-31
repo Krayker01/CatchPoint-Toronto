@@ -1,71 +1,135 @@
 import axios from "axios";
 import React, { useState } from 'react';
 
-const fishList = ['Salmon', 'Tuna', 'Trout', 'Bass', 'Carp'];
-const locationList = ['River', 'Lake', 'Sea', 'Pond', 'Stream'];
-
 const FishLocationSelector = ({ onRateLimit }) => {
     const [fish, setFish] = useState('');
+    const [selectedFish, setSelectedFish] = useState(null);
     const [location, setLocation] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState(null);
     const [fishSuggestions, setFishSuggestions] = useState([]);
     const [locationSuggestions, setLocationSuggestions] = useState([]);
+    const [message, setMessage] = useState('');
 
     // Handle fish input change
-    const handleFishChange = (e) => {
+    const handleFishChange = async (e) => {
         const value = e.target.value;
         setFish(value);
-        setLocation(''); // reset location
-        setFishSuggestions(fishList.filter(f => f.toLowerCase().includes(value.toLowerCase())));
+        setLocation('');
+        setSelectedFish(null);
+        setSelectedLocation(null);
+        if (value.length < 2) {
+            setFishSuggestions([]);
+            return;
+        }
+        try {
+            const res = await axios.get(`http://localhost:3000/api/search/fish`, { params: { name: value } });
+            setFishSuggestions(res.data);
+            if (res.data.length > 0) {
+                setSelectedFish(res.data[0]);
+            } else {
+                setSelectedFish(null);
+            }
+        } catch (error) {
+            console.error("Error fetching fish suggestions:", error);
+            setFishSuggestions([]);
+            setSelectedFish(null);
+        }
     };
+
 
     // Handle location input change
-    const handleLocationChange = (e) => {
+    const handleLocationChange = async (e) => {
         const value = e.target.value;
         setLocation(value);
-        setFish(''); // reset fish
-        setLocationSuggestions(locationList.filter(l => l.toLowerCase().includes(value.toLowerCase())));
+        setFish('');
+        setSelectedFish(null);
+        setSelectedLocation(null);
+        if (value.length < 2) {
+            setLocationSuggestions([]);
+            return;
+        }
+        try {
+            const res = await axios.get("http://localhost:3000/api/search/location", { params: { name: value } });
+            setLocationSuggestions(res.data);
+            if (res.data.length > 0) {
+                setSelectedLocation(res.data[0]);
+            } else {
+                setSelectedLocation(null);
+            }
+        } catch (error) {
+            console.error("Error fetching location suggestions:", error);
+            setLocationSuggestions([]);
+            setSelectedLocation(null);
+        }
     };
 
+
     // Select a fish from suggestions
-    const handleSelectFish = (value) => {
-        setFish(value);
-        setLocation(''); // reset location
+    const handleSelectFish = (fishObj) => {
+        setFish(fishObj.name);
+        setSelectedFish(fishObj);
         setFishSuggestions([]);
+        setLocation('');
+        setSelectedLocation(null);
     };
 
     // Select a location from suggestions
-    const handleSelectLocation = (value) => {
-        setLocation(value);
-        setFish(''); // reset fish
+    const handleSelectLocation = (locationObj) => {
+        setLocation(locationObj.name);
+        setSelectedLocation(locationObj);
         setLocationSuggestions([]);
+        setFish('');
+        setSelectedFish(null);
     };
 
     // Fetch data on button click
     const fetchNotes = async () => {
-        if (!fish && !location) return;
-
+        setMessage(''); // сбрасываем предыдущие сообщения
         try {
-            const res = await axios.get("http://localhost:3000/api/search/fish/");
-            console.log("Server response:", res.data);
-
-            if (res.status === 429) {
-                onRateLimit?.();
-                return;
+            if (fish) {
+                if (selectedFish) {
+                    const res = await axios.get(`http://localhost:3000/api/search/fish/${selectedFish.id}/location`);
+                    console.log("Locations for fish:", res.data);
+                    if (!res.data.locations || res.data.locations.length === 0) {
+                        setMessage(`No locations found for "${selectedFish.name}"`);
+                    }
+                } else {
+                    const res = await axios.get(`http://localhost:3000/api/search/fish`, { params: { name: fish } });
+                    const fishResults = res.data;
+                    console.log("Locations for typed fish:", fishResults);
+                    if (fishResults.length === 0) {
+                        setMessage(`Fish "${fish}" not found in database`);
+                    } else {
+                        setSelectedFish(fishResults[0]); // можно выбрать первую подсказку
+                    }
+                }
             }
 
-            // Здесь можно использовать данные для подсказок
-            // Например:
-            // setFishSuggestions(res.data.fish);
-            // setLocationSuggestions(res.data.locations);
-
+            if (location) {
+                if (selectedLocation) {
+                    const res = await axios.get(`http://localhost:3000/api/search/location/${selectedLocation.id}/fish`);
+                    console.log("Fish in location:", res.data);
+                    if (!res.data.fishes || res.data.fishes.length === 0) {
+                        setMessage(`No fish found in "${selectedLocation.name}"`);
+                    }
+                } else {
+                    const res = await axios.get(`http://localhost:3000/api/search/location`, { params: { name: location } });
+                    const locationResults = res.data;
+                    console.log("Fish in typed location:", locationResults);
+                    if (locationResults.length === 0) {
+                        setMessage(`Location "${location}" not found in database`);
+                    } else {
+                        setSelectedLocation(locationResults[0]);
+                    }
+                }
+            }
         } catch (error) {
-            if (error.response && error.response.status === 429) {
-                onRateLimit?.();
-            } else {
-                console.log("Error fetching", error);
-            }
+            console.error("Error fetching data:", error);
+            setMessage('Error fetching data from server');
         }
     };
+
+
 
     return (
         <div className="fish-location-selector">
@@ -85,9 +149,9 @@ const FishLocationSelector = ({ onRateLimit }) => {
                     />
                     {fishSuggestions.length > 0 && (
                         <ul className="suggestions">
-                            {fishSuggestions.map((f, idx) => (
-                                <li key={idx} onClick={() => handleSelectFish(f)}>
-                                    {f}
+                            {fishSuggestions.map((f) => (
+                                <li key={f.id} onClick={() => handleSelectFish(f)}>
+                                    {f.name}
                                 </li>
                             ))}
                         </ul>
@@ -105,9 +169,9 @@ const FishLocationSelector = ({ onRateLimit }) => {
                     />
                     {locationSuggestions.length > 0 && (
                         <ul className="suggestions">
-                            {locationSuggestions.map((l, idx) => (
-                                <li key={idx} onClick={() => handleSelectLocation(l)}>
-                                    {l}
+                            {locationSuggestions.map((l) => (
+                                <li key={l.id} onClick={() => handleSelectLocation(l)}>
+                                    {l.name}
                                 </li>
                             ))}
                         </ul>
@@ -122,6 +186,7 @@ const FishLocationSelector = ({ onRateLimit }) => {
                     See Catch
                 </button>
             </div>
+            {message && <div className="message">{message}</div>}
         </div>
     );
 };

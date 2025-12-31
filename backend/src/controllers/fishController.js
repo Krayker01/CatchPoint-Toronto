@@ -3,20 +3,105 @@ import Fish from "../models/Fish.js";
 import Location from "../models/Location.js";
 
 /**
- * Controller: Get all fish
- * Returns all fish with populated locations and baits
+ * Controller: Find fish by name
  */
-export async function getAllFish(_, res) {
+export async function searchFishByName(req, res) {
     try {
-        const fishList = await Fish.find()
-            .populate("locations") // just location _id
-            .populate("baits");
-        return res.status(200).json({ fish: fishList });
+        let { name } = req.query;
+        if (!name) return res.json([]);
+        name = String(name).trim();
+        if (name.length < 2) return res.json([]);
+        const regex = new RegExp(name, "i");
+        const fishes = await Fish.find({ name: { $regex: regex } }).limit(10);
+        const fishResults = fishes.map(f => ({ id: f._id, name: f.name }));
+        res.json(fishResults);
     } catch (error) {
-        console.error("Error in getAllFish:", error);
+        console.error("Server error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+/**
+ * Controller: Find location by name
+ */
+export async function searchLocationByName(req, res) {
+    try {
+        let { name } = req.query;
+        if (!name) return res.json([]);
+        name = String(name).trim();
+        if (name.length < 2) return res.json([]);
+        const regex = new RegExp(name, "i");
+        const locations = await Location.find({ name: { $regex: regex } }).limit(10);
+        const locationResults = locations.map(l => ({ id: l._id, name: l.name }));
+        res.json(locationResults);
+    } catch (error) {
+        console.error("Server error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+
+/**
+ * Controller: Get all fish in a location
+ */
+export async function getFishByLocation(req, res) {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ message: "Location required" });
+        const loc = await Location.findById(id).populate("fish");
+        if (!loc) return res.status(404).json({ message: "Location not found" });
+        const fishes = loc.fish.map(fEntry => fEntry.toObject());
+        return res.status(200).json({
+            location: { id: loc._id, name: loc.name, coordinates: loc.coordinates },
+            fishes
+        });
+
+    } catch (error) {
+        console.error("Error in getFishByLocation:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 }
+
+/**
+ * Controller: Get all locations for a specific fish
+ */
+export async function getLocationByFish(req, res) {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ message: "Fish required" });
+        const fis = await Fish.findById(id)
+            .populate({
+                path: "locations",
+                select: "name waterType coordinates"
+            })
+            .lean();
+        if (!fis) return res.status(404).json({ message: "Fish not found" });
+        const locations = fis.locations.map(loc => loc);
+        return res.status(200).json({
+            fish: { id: fis._id, name: fis.name },
+            locations
+        });
+    } catch (error) {
+        console.error("Error in getLocationByFish:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+/**
+ * Controller: Get all fish
+ * Returns all fish with populated locations and baits
+ */
+// export async function getAllFish(_, res) {
+//     try {
+//         const fishList = await Fish.find()
+//             .populate("locations") // just location _id
+//             .populate("baits");
+//         return res.status(200).json({ fish: fishList });
+//     } catch (error) {
+//         console.error("Error in getAllFish:", error);
+//         return res.status(500).json({ message: "Internal server error" });
+//     }
+// }
 
 // export async function getAllLocation(_, res) {
 //     try {
@@ -32,44 +117,44 @@ export async function getAllFish(_, res) {
  * Controller: Get fish by ID
  * Returns fish with all locations + baits
  */
-export async function getFishById(req, res) {
-    const { id } = req.params;
+// export async function getFishById(req, res) {
+//     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "Invalid fish ID" });
-    }
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//         return res.status(400).json({ message: "Invalid fish ID" });
+//     }
 
-    try {
-        const fish = await Fish.findById(id)
-            .populate("locations")
-            .populate("baits");
+//     try {
+//         const fish = await Fish.findById(id)
+//             .populate("locations")
+//             .populate("baits");
 
-        if (!fish) return res.status(404).json({ message: "Fish not found" });
+//         if (!fish) return res.status(404).json({ message: "Fish not found" });
 
-        // Fetch season info for this fish from locations
-        const populatedLocations = await Location.find({ "fish.fish": fish._id });
+//         // Fetch season info for this fish from locations
+//         const populatedLocations = await Location.find({ "fish.fish": fish._id });
 
-        const locationsWithSeason = populatedLocations.map(loc => {
-            const fishEntry = loc.fish.find(f => f.fish.equals(fish._id));
-            return {
-                _id: loc._id,
-                name: loc.name,
-                coordinates: loc.coordinates,
-                image: loc.image,
-                bestSeason: fishEntry?.bestSeason || {}
-            };
-        });
+//         const locationsWithSeason = populatedLocations.map(loc => {
+//             const fishEntry = loc.fish.find(f => f.fish.equals(fish._id));
+//             return {
+//                 _id: loc._id,
+//                 name: loc.name,
+//                 coordinates: loc.coordinates,
+//                 image: loc.image,
+//                 bestSeason: fishEntry?.bestSeason || {}
+//             };
+//         });
 
-        return res.status(200).json({
-            fish: {
-                ...fish.toObject(),
-            }
-        });
-    } catch (error) {
-        console.error("Error in getFishById:", error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
+//         return res.status(200).json({
+//             fish: {
+//                 ...fish.toObject(),
+//             }
+//         });
+//     } catch (error) {
+//         console.error("Error in getFishById:", error);
+//         return res.status(500).json({ message: "Internal server error" });
+//     }
+// }
 
 /**
  * Controller: Get fish by filters
@@ -136,46 +221,3 @@ export async function getFishById(req, res) {
 //         return res.status(500).json({ message: "Internal server error" });
 //     }
 // }
-
-/**
- * Controller: Get all fish in a location
- */
-export async function getFishByLocation(req, res) {
-    try {
-        const { id } = req.params;
-        if (!id) return res.status(400).json({ message: "Location required" });
-        const loc = await Location.findById(id).populate("fish");
-        if (!loc) return res.status(404).json({ message: "Location not found" });
-        const fishes = loc.fish.map(fEntry => fEntry.toObject());
-        return res.status(200).json({
-            location: { id: loc._id, name: loc.name, coordinates: loc.coordinates },
-            fishes
-        });
-
-    } catch (error) {
-        console.error("Error in getFishByLocation:", error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
-
-export async function getLocationByFish(req, res) {
-    try {
-        const { id } = req.params;
-        if (!id) return res.status(400).json({ message: "Fish required" });
-        const fis = await Fish.findById(id)
-            .populate({
-                path: "locations",
-                select: "name waterType coordinates"
-            })
-            .lean();
-        if (!fis) return res.status(404).json({ message: "Fish not found" });
-        const locations = fis.locations.map(loc => loc);
-        return res.status(200).json({
-            fish: { id: fis._id, name: fis.name },
-            locations
-        });
-    } catch (error) {
-        console.error("Error in getLocationByFish:", error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
