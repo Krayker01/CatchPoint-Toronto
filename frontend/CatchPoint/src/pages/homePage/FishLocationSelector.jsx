@@ -134,7 +134,7 @@ const FishLocationSelector = ({ onRateLimit }) => {
     return (
         <div className="fish-location-selector">
             <h3 className="selector-title tagesschrift-regular">
-                Type a fish or location to see what you can catch
+                Type a fish or a body of water to see what you can catch
             </h3>
 
             <div className="inputs">

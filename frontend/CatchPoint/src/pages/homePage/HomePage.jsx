@@ -4,6 +4,7 @@ import NavBar from '../../components/layout/NavBar.jsx'
 import RateLimitUI from '../../components/layout/RateLimitUI.jsx'
 import FishLocationSelector from './FishLocationSelector.jsx'
 import "./HomePage.css"
+import FishCardMap from './FishCardMap.jsx'
 
 const HomePage = () => {
     const [isRateLimited, setRateLimited] = useState(false);
@@ -20,7 +21,7 @@ const HomePage = () => {
                         <FishLocationSelector onRateLimit={handleRateLimit} />
                     </div>
                     <div className="content-right">
-
+                        <FishCardMap />
                     </div>
                 </div> : <RateLimitUI />}
 
